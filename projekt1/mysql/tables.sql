@@ -2,10 +2,13 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL';
 
+CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci ;
+USE `mydb` ;
+
 -- -----------------------------------------------------
--- Table `component_types`
+-- Table `mydb`.`component_types`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `component_types` (
+CREATE  TABLE IF NOT EXISTS `mydb`.`component_types` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(255) NULL ,
   PRIMARY KEY (`id`) )
@@ -13,27 +16,27 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `components`
+-- Table `mydb`.`components`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `components` (
+CREATE  TABLE IF NOT EXISTS `mydb`.`components` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `type_id` INT NOT NULL ,
   `name` VARCHAR(255) NULL ,
-  `price` DECIMAL NULL ,
+  `price` DECIMAL(10,2) NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_components_component_types1` (`type_id` ASC) ,
   CONSTRAINT `fk_components_component_types1`
     FOREIGN KEY (`type_id` )
-    REFERENCES `component_types` (`id` )
+    REFERENCES `mydb`.`component_types` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `component_ergonomics`
+-- Table `mydb`.`component_ergonomics`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `component_ergonomics` (
+CREATE  TABLE IF NOT EXISTS `mydb`.`component_ergonomics` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(255) NULL ,
   PRIMARY KEY (`id`) )
@@ -41,19 +44,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `component_ergonomic_values`
+-- Table `mydb`.`component_seals`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `component_ergonomic_values` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `value` VARCHAR(255) NULL ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `component_seals`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `component_seals` (
+CREATE  TABLE IF NOT EXISTS `mydb`.`component_seals` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(255) NULL ,
   `description` TEXT NULL ,
@@ -62,60 +55,52 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `components_has_component_seals`
+-- Table `mydb`.`component_to_seals`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `components_has_component_seals` (
+CREATE  TABLE IF NOT EXISTS `mydb`.`component_to_seals` (
   `component_id` INT NOT NULL ,
   `seal_id` INT NOT NULL ,
-  PRIMARY KEY (`component_id`, `seal_id`) ,
   INDEX `fk_components_has_component_seals_component_seals1` (`seal_id` ASC) ,
   INDEX `fk_components_has_component_seals_components` (`component_id` ASC) ,
   CONSTRAINT `fk_components_has_component_seals_components`
     FOREIGN KEY (`component_id` )
-    REFERENCES `components` (`id` )
+    REFERENCES `mydb`.`components` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_components_has_component_seals_component_seals1`
     FOREIGN KEY (`seal_id` )
-    REFERENCES `component_seals` (`id` )
+    REFERENCES `mydb`.`component_seals` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `component_to_ergonomics`
+-- Table `mydb`.`component_to_ergonomics`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `component_to_ergonomics` (
+CREATE  TABLE IF NOT EXISTS `mydb`.`component_to_ergonomics` (
   `component_id` INT NOT NULL ,
   `attribute_id` INT NOT NULL ,
-  `attribute_value_id` INT NOT NULL ,
-  PRIMARY KEY (`component_id`, `attribute_id`, `attribute_value_id`) ,
+  `value` VARCHAR(255) NOT NULL ,
   INDEX `fk_components_has_component_ergonomics_component_ergonomics1` (`attribute_id` ASC) ,
   INDEX `fk_components_has_component_ergonomics_components1` (`component_id` ASC) ,
-  INDEX `fk_components_has_component_ergonomics_component_ergonomic_va1` (`attribute_value_id` ASC) ,
   CONSTRAINT `fk_components_has_component_ergonomics_components1`
     FOREIGN KEY (`component_id` )
-    REFERENCES `components` (`id` )
+    REFERENCES `mydb`.`components` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_components_has_component_ergonomics_component_ergonomics1`
     FOREIGN KEY (`attribute_id` )
-    REFERENCES `component_ergonomics` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_components_has_component_ergonomics_component_ergonomic_va1`
-    FOREIGN KEY (`attribute_value_id` )
-    REFERENCES `component_ergonomic_values` (`id` )
+    REFERENCES `mydb`.`component_ergonomics` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `component_attributes`
+-- Table `mydb`.`component_attributes`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `component_attributes` (
+CREATE  TABLE IF NOT EXISTS `mydb`.`component_attributes` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(255) NULL ,
   `abbreviation` VARCHAR(20) NULL ,
@@ -124,61 +109,64 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `component_attribute_values`
+-- Table `mydb`.`attribute_to_component`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `component_attribute_values` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `value` VARCHAR(255) NULL ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `attribute_to_component`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `attribute_to_component` (
+CREATE  TABLE IF NOT EXISTS `mydb`.`attribute_to_component` (
   `attribute_id` INT NOT NULL ,
   `component_id` INT NOT NULL ,
-  `value_id` INT NOT NULL ,
-  PRIMARY KEY (`attribute_id`, `component_id`, `value_id`) ,
+  `value` VARCHAR(255) NOT NULL ,
   INDEX `fk_component_attributes_has_components_components1` (`component_id` ASC) ,
   INDEX `fk_component_attributes_has_components_component_attributes1` (`attribute_id` ASC) ,
-  INDEX `fk_attribute_to_component_component_attribute_values1` (`value_id` ASC) ,
   CONSTRAINT `fk_component_attributes_has_components_component_attributes1`
     FOREIGN KEY (`attribute_id` )
-    REFERENCES `component_attributes` (`id` )
+    REFERENCES `mydb`.`component_attributes` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_component_attributes_has_components_components1`
     FOREIGN KEY (`component_id` )
-    REFERENCES `components` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_attribute_to_component_component_attribute_values1`
-    FOREIGN KEY (`value_id` )
-    REFERENCES `component_attribute_values` (`id` )
+    REFERENCES `mydb`.`components` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `type_to_attribute`
+-- Table `mydb`.`type_to_attribute`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `type_to_attribute` (
+CREATE  TABLE IF NOT EXISTS `mydb`.`type_to_attribute` (
   `type_id` INT NOT NULL ,
   `attribute_id` INT NOT NULL ,
-  PRIMARY KEY (`type_id`, `attribute_id`) ,
   INDEX `fk_component_types_has_component_attributes_component_attribu1` (`attribute_id` ASC) ,
   INDEX `fk_component_types_has_component_attributes_component_types1` (`type_id` ASC) ,
   CONSTRAINT `fk_component_types_has_component_attributes_component_types1`
     FOREIGN KEY (`type_id` )
-    REFERENCES `component_types` (`id` )
+    REFERENCES `mydb`.`component_types` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_component_types_has_component_attributes_component_attribu1`
     FOREIGN KEY (`attribute_id` )
-    REFERENCES `component_attributes` (`id` )
+    REFERENCES `mydb`.`component_attributes` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`attribute_to_type`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `mydb`.`attribute_to_type` (
+  `attribute_id` INT NOT NULL ,
+  `component_id` INT NOT NULL ,
+  INDEX `fk_component_attributes_has_component_types_component_types1` (`component_id` ASC) ,
+  INDEX `fk_component_attributes_has_component_types_component_attribu1` (`attribute_id` ASC) ,
+  CONSTRAINT `fk_component_attributes_has_component_types_component_attribu1`
+    FOREIGN KEY (`attribute_id` )
+    REFERENCES `mydb`.`component_attributes` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_component_attributes_has_component_types_component_types1`
+    FOREIGN KEY (`component_id` )
+    REFERENCES `mydb`.`component_types` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
