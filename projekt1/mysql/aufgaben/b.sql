@@ -15,7 +15,7 @@ LEFT JOIN
 	`attribute_to_component` a
 	ON a.component_id = c.id
 	
-INNER JOIN
+LEFT JOIN
 	component_attributes ca
 		ON ca.id = a.attribute_id
 		
