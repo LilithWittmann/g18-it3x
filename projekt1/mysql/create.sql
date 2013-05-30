@@ -7,7 +7,8 @@ CREATE TABLE `attribute_to_component` (
   KEY `fk_component_attributes_has_components_components1` (`component_id`),
   KEY `fk_component_attributes_has_components_component_attributes1` (`attribute_id`),
   CONSTRAINT `fk_component_attributes_has_components_component_attributes1` FOREIGN KEY (`attribute_id`) REFERENCES `component_attributes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_component_attributes_has_components_components1` FOREIGN KEY (`component_id`) REFERENCES `components` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_component_attributes_has_components_components1` FOREIGN KEY (`component_id`) REFERENCES `components` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  PRIMARY KEY(attribute_id, component_id, value)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `attribute_to_type` (
@@ -16,7 +17,8 @@ CREATE TABLE `attribute_to_type` (
   KEY `fk_component_attributes_has_component_types_component_types1` (`component_id`),
   KEY `fk_component_attributes_has_component_types_component_attribu1` (`attribute_id`),
   CONSTRAINT `fk_component_attributes_has_component_types_component_attribu1` FOREIGN KEY (`attribute_id`) REFERENCES `component_attributes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_component_attributes_has_component_types_component_types1` FOREIGN KEY (`component_id`) REFERENCES `component_types` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_component_attributes_has_component_types_component_types1` FOREIGN KEY (`component_id`) REFERENCES `component_types` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  PRIMARY KEY (attribute_id, component_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `component_attributes` (
@@ -46,7 +48,8 @@ CREATE TABLE `component_to_ergonomics` (
   KEY `fk_components_has_component_ergonomics_component_ergonomics1` (`attribute_id`),
   KEY `fk_components_has_component_ergonomics_components1` (`component_id`),
   CONSTRAINT `fk_components_has_component_ergonomics_components1` FOREIGN KEY (`component_id`) REFERENCES `components` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_components_has_component_ergonomics_component_ergonomics1` FOREIGN KEY (`attribute_id`) REFERENCES `component_ergonomics` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_components_has_component_ergonomics_component_ergonomics1` FOREIGN KEY (`attribute_id`) REFERENCES `component_ergonomics` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  PRIMARY KEY (component_id, attribute_id, value)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `component_to_seals` (
@@ -79,7 +82,8 @@ CREATE TABLE `type_to_attribute` (
   KEY `fk_component_types_has_component_attributes_component_attribu1` (`attribute_id`),
   KEY `fk_component_types_has_component_attributes_component_types1` (`type_id`),
   CONSTRAINT `fk_component_types_has_component_attributes_component_types1` FOREIGN KEY (`type_id`) REFERENCES `component_types` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_component_types_has_component_attributes_component_attribu1` FOREIGN KEY (`attribute_id`) REFERENCES `component_attributes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_component_types_has_component_attributes_component_attribu1` FOREIGN KEY (`attribute_id`) REFERENCES `component_attributes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  PRIMARY KEY(type_id, attribute_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
